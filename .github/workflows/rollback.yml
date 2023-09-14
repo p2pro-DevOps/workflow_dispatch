@@ -32,4 +32,3 @@ jobs:
         docker stop nginx-container || true
         docker rm nginx-container || true
         docker run -d --name nginx-container -p 80:80 dockerp2pro/nginx-custom:${{ github.event.inputs.tag }}
-
