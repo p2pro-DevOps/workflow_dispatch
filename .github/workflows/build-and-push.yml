@@ -21,3 +21,4 @@ jobs:
         context: .
         push: true
         tags: dockerp2pro/charan1:${{ env.VERSION }}
+        
