@@ -1,0 +1,35 @@
+name: Manual Rollback of Nginx Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to rollback to'
+        required: true
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Fetch and display Docker image tags
+      run: |
+        echo "Fetching available tags from Docker Hub..."
+        REPO="dockerp2pro/nginx-custom"
+        TOKEN=$(curl -s -H "Content-Type: application/json" -X POST -d '{"username": "dockerp2pro", "password": "Akhilp2pro"}' https://hub.docker.com/v2/users/login/ | jq -r .token)
+        curl -s -H "Authorization: JWT ${TOKEN}" https://hub.docker.com/v2/repositories/$REPO/tags | jq -r '.results[].name'
+
+    - name: Login to DockerHub
+      run: docker login -u dockerp2pro -p Akhilp2pro
+
+    - name: Pull Docker image
+      run: docker pull dockerp2pro/nginx-custom:${{ github.event.inputs.tag }}
+
+    - name: Deploy Docker image
+      run: |
+        docker stop nginx-container || true
+        docker rm nginx-container || true
+        docker run -d --name nginx-container -p 80:80 dockerp2pro/nginx-custom:${{ github.event.inputs.tag }}
+
