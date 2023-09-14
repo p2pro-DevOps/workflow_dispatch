@@ -22,4 +22,3 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: dockerp2pro/nginx-custom:${{ github.run_number }}
-
