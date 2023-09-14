@@ -13,7 +13,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Login to DockerHub
-      run: docker login -u dockerp2pro -p p2prodevops
+      run: docker login -u dockerp2pro -p Akhilp2pro
 
     - name: Build and Push Docker image
       uses: docker/build-push-action@v2
