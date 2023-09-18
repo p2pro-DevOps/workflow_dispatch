@@ -1,0 +1,29 @@
+name: Rollback workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: string
+      image_tag:
+        description: 'Tag to rollback to'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  actions: read
+  pages: write
+  id-token: write
+
+jobs:
+  rollback-deploy:
+    if: github.ref == 'refs/heads/' + ${{ secrets.BRANCH_NAME }}
+    uses: ./.github/workflows/reusable-rollback-workflow.yml
+    with:
+      deploy_environment: ${{ github.event.inputs.deploy_environment }}
+      app_var_file: 'metrics-site-dev-vars.yml'
+      image_name: 'insights-and-analytics/metrics-site'
+      image_tag: ${{ github.event.inputs.image_tag }}
