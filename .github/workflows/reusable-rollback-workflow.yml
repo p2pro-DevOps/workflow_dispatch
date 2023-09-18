@@ -1,0 +1,42 @@
+name: Metrics-Site Version Rollback
+
+on:
+  workflow_call:
+    inputs:
+      deploy_environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: string
+      app_var_file:
+        description: 'Path to application variable file'
+        required: true
+        type: string
+      image_name:
+        description: 'Docker image name'
+        required: true
+        type: string
+      image_tag:
+        description: 'Tag to rollback to'
+        required: true
+        type: string
+
+jobs:
+  rollback:
+    runs-on:
+      group: events
+      labels: [self-hosted]
+    steps:
+      - name: Checkout Ansible code.
+        uses: actions/checkout@v3
+
+      - name: Create environment var context json file
+        env:
+          GITHUB_VAR_CONTEXT: ${{ toJson(vars) }}
+        run: echo "$GITHUB_VAR_CONTEXT" > ./env-vars.json
+        working-directory: deployment-scripts/ansible
+
+      - name: Execute Ansible playbook
+        run: |
+          ansible-playbook deployment.yml -e "@env-vars.json" -e "@${{ inputs.app_var_file }}" \
+          -e "nomad_spec_docker_image=${{ inputs.image_name }}" -e "nomad_spec_workflow_id=${{ inputs.image_tag }}"
+        working-directory: deployment-scripts/ansible
