@@ -1,0 +1,49 @@
+name: Sample Workflow
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      skip_static_analysis:
+        description: 'Skip static code analysis?'
+        required: false
+        default: 'false'
+        type: 'boolean'
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+  static-code-analysis:
+    runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || (github.event_name == 'workflow_dispatch' && github.event.inputs.skip_static_analysis != 'true')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Static Code Analysis
+        run: echo "Running static code analysis"
+
+  build:
+    runs-on: ubuntu-latest
+    needs: static-code-analysis
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Build
+        run: npm run build # Assuming you have a "build" script in your package.json
