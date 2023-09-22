@@ -16,6 +16,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      - name: Echo Formatted String
+      - name: Echo Using String Interpolation
         run: |
-          echo "Formatted app_var_file:  reusable-rollback-${{ github.event.inputs.deploy_environment }}-workflow.yml"
+          echo "Formatted app_var_file: reusable-rollback-${{ github.event.inputs.deploy_environment }}-workflow.yml"
+
+      - name: Echo Using Format Function
+        run: |
+          echo "app_var_file: ${{ format('reusable-rollback-{0}-workflow.yml', github.event.inputs.deploy_environment) }}"
