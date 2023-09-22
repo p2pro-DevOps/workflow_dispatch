@@ -1,16 +1,19 @@
-name: Simple Test
+name: Format Function POC
 
 on:
   workflow_dispatch:
     inputs:
       deploy_environment:
-        description: 'Environment'
+        description: 'Environment to deploy to'
         required: true
         type: string
 
 jobs:
-  test:
+  test-format-function:
     runs-on: ubuntu-latest
     steps:
-    - name: Echo Input
-      run: echo "Input: ${{ github.event.inputs.deploy_environment }}"
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Print Formatted app_var_file
+        run: echo "app_var_file: ${{ format('metrics-site-{0}-vars.yml', github.event.inputs.deploy_environment) }}"
