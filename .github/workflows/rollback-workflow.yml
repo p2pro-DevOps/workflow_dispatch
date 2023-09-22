@@ -1,29 +1,16 @@
-name: Rollback workflow
+name: Simple Test
 
 on:
   workflow_dispatch:
     inputs:
       deploy_environment:
-        description: 'Environment to deploy to'
+        description: 'Environment'
         required: true
         type: string
-      image_tag:
-        description: 'Tag to rollback to'
-        required: true
-        type: string
-
-permissions:
-  contents: write
-  actions: read
-  pages: write
-  id-token: write
 
 jobs:
-  rollback-deploy:
-    uses: ./.github/workflows/reusable-deploy-workflow.yml
-    with:
-      deploy_environment: ${{ github.event.inputs.deploy_environment }}
-      app_var_file: ${{ format('metrics-site-{0}-vars.yml', github.event.inputs.deploy_environment) }}
-      image_name: 'insights-and-analytics/metrics-site'
-      image_tag: ${{ github.event.inputs.image_tag }}
-    secrets: inherit
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Echo Input
+      run: echo "Input: ${{ github.event.inputs.deploy_environment }}"
