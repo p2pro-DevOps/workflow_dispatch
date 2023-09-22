@@ -1,0 +1,21 @@
+name: Test Format Function
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'dev'
+        type: string
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Echo Formatted String
+        run: |
+          echo "Formatted app_var_file:  reusable-rollback-${{ github.event.inputs.deploy_environment }}-workflow.yml"
