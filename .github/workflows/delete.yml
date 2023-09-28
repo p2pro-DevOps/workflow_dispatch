@@ -2,9 +2,11 @@ name: Delete Old Workflow Runs
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
+    inputs:
+      workflowName:
+        description: 'Name of the workflow file to delete runs from (e.g., dotnet-test.yml)'
+        required: true
+        
 
 jobs:
   delete-runs:
@@ -25,7 +27,7 @@ jobs:
     - name: Delete Runs
       run: |
         repo="${{ github.repository }}"
-        workflow="${{ github.event.inputs.workflowName }}" # You'll need to specify this as an input if you use workflow_dispatch
+        workflow="Your_Workflow_Name_Here" # Replace this with the name of the workflow you want to delete
         page_size=50
         page_number=1
         while : ; do
@@ -40,7 +42,6 @@ jobs:
               error_message=$(gh run delete $run_id --repo $repo 2>&1 >/dev/null)
               if [[ $error_message == *"gh: Not Found (HTTP 404)"* ]]; then
                 echo "Encountered 404 error. Skipping..."
-                # exit 1  # Uncomment this if you want to stop the script on 404
               fi
             fi
             sleep 2  
